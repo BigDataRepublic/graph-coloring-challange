@@ -1,3 +1,5 @@
+import frigidum
+import random
 
 def parse_graph(file_content):
     """
@@ -47,9 +49,6 @@ with open(file_path, 'r') as file:
 # Now 'adjacency_matrix' contains the graph representation
 # You can use 'adjacency_matrix' for further processing or analysis
 
-print(adjacency_matrix)
-
-
 
 def create_initial_solution(num_vertices):
     """
@@ -64,10 +63,6 @@ def create_initial_solution(num_vertices):
     # Each vertex is colored with its own number (adjusted for zero-based indexing)
     return [i for i in range(num_vertices)]
 
-
-print( len(adjacency_matrix) )
-
-initial_solution = create_initial_solution( len(adjacency_matrix) )
 
 def verify_solution(adjacency_matrix, solution):
     """
@@ -88,9 +83,6 @@ def verify_solution(adjacency_matrix, solution):
                 if solution[i] == solution[j]:  # Check if they have the same color
                     return False  # Adjacent vertices have the same color, not a valid solution
     return True  # All adjacent vertices have different colors, valid solution
-
-
-print( verify_solution(adjacency_matrix, initial_solution) )
 
 
 def free_colors_for_vertex(vertex, adjacency_matrix, solution):
@@ -119,28 +111,11 @@ def free_colors_for_vertex(vertex, adjacency_matrix, solution):
 
     return available_colors
 
-# Example usage
-vertex = 0  # Example vertex number
-available_colors = free_colors_for_vertex(vertex, adjacency_matrix, initial_solution)
-print("Available colors for vertex", vertex, ":", available_colors)
+# # Example usage
+# vertex = 0 
+# available_colors = free_colors_for_vertex(vertex, adjacency_matrix, initial_solution)
+# print("Available colors for vertex", vertex, ":", available_colors)
 
-
-# Example usage
-vertex = 1  # Example vertex number
-available_colors = free_colors_for_vertex(vertex, adjacency_matrix, initial_solution)
-print("Available colors for vertex", vertex, ":", available_colors)
-
-
-
-# Example usage
-vertex = 2  # Example vertex number
-available_colors = free_colors_for_vertex(vertex, adjacency_matrix, initial_solution)
-print("Available colors for vertex", vertex, ":", available_colors)
-
-
-
-
-import random
 
 def recolor_vertex(adjacency_matrix, solution):
     """
@@ -174,11 +149,6 @@ def recolor_vertex(adjacency_matrix, solution):
     # Step 5: Return the updated solution
     return new_solution
 
-# Example usage
-new_solution = recolor_vertex(adjacency_matrix, initial_solution)
-print("New solution after recoloring a vertex:", new_solution)
-
-print( verify_solution(adjacency_matrix, new_solution) )
 
 def objective_colors_used(solution):
     """
@@ -194,14 +164,39 @@ def objective_colors_used(solution):
     unique_colors = set(solution)
     return len(unique_colors)
 
-# Example usage
-current_colors_used = objective_colors_used(initial_solution)
-print("Number of colors used in the initial solution:", current_colors_used)
+def objective_color_class_square_sum(solution):
+    """
+    Calculates the negative sum of the squares of the sizes of color classes in the solution. 
+    This objective function is used to encourage a more balanced distribution of colors 
+    across vertices in the graph coloring problem.
 
-import frigidum
+    Each color class is defined by the vertices colored with the same color. The size of 
+    a color class is the number of vertices with that color. This function squares the size 
+    of each color class and sums these values across all classes. The negative of this sum 
+    is returned as the objective value.
 
-import frigidum
-import random
+    Args:
+        solution (list): The coloring solution, where each element in the list represents 
+                         the color of the corresponding vertex in the graph.
+
+    Returns:
+        int: The negative sum of the squares of the sizes of the color classes. A lower 
+             value (more negative) indicates a more balanced color distribution.
+    """
+    color_class_sizes = {}
+    
+    # Count the number of vertices for each color
+    for color in solution:
+        if color in color_class_sizes:
+            color_class_sizes[color] += 1
+        else:
+            color_class_sizes[color] = 1
+
+    # Sum the squares of the color class sizes
+    sum_of_squares = sum(size ** 2 for size in color_class_sizes.values())
+    return -1 * sum_of_squares
+
+
 
 # Assuming adjacency_matrix is already defined
 # Define the functions needed for SA
@@ -240,41 +235,5 @@ local_opt = frigidum.sa(
 print("Optimized solution:", local_opt)
 print("Colors Used solution:", objective_colors_used(local_opt[0]))
 
-
-def objective_color_class_square_sum(solution):
-    color_class_sizes = {}
-    
-    # Count the number of vertices for each color
-    for color in solution:
-        if color in color_class_sizes:
-            color_class_sizes[color] += 1
-        else:
-            color_class_sizes[color] = 1
-
-    # Sum the squares of the color class sizes
-    sum_of_squares = sum(size ** 2 for size in color_class_sizes.values())
-    return -1 * sum_of_squares
-
-
-# Example usage
-sum_of_squares = objective_color_class_square_sum(local_opt[0])
-print("Sum of squares of color class sizes:", sum_of_squares)
-
-
-
-
-# Simulated Annealing process
-local_opt = frigidum.sa(
-    random_start=random_start_gcp, 
-    neighbours=[recolor_one_vertex], 
-    objective_function=objective_color_class_square_sum, 
-    T_start=10**8, 
-    T_stop=0.00001, 
-    repeats=10**2, 
-    copy_state=frigidum.annealing.copy
-)
-
-
-# The result
-print("Optimized solution:", local_opt)
-print("Colors Used solution:", objective_colors_used(local_opt[0]))
+valid_solution = verify_solution(adjacency_matrix, local_opt[0] )
+print(f"Solution Valid?: {valid_solution}")
