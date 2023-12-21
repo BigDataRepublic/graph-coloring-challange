@@ -225,8 +225,8 @@ local_opt = frigidum.sa(
     random_start=initial_solution, 
     neighbours=[recolor_one_vertex], 
     objective_function=objective_gcp, 
-    T_start=10**8, 
-    T_stop=0.00001, 
+    T_start=10**4, 
+    T_stop=0.5, 
     repeats=10**2, 
     copy_state=frigidum.annealing.copy
 )
