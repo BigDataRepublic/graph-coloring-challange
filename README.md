@@ -1,5 +1,12 @@
 # Graph Coloring Challenge!
 
+## Simulated Annealing
+
+![exp](https://www.ncl.ac.uk/webtemplate/ask-assets/external/maths-resources/images/Exp_function.png)
+
+![acceptance](https://miro.medium.com/v2/resize:fit:1400/format:webp/1*WnBJxCX9FBYAhnHl5OfJhg.png)
+
+
 ## Instuctions
 
 Install a Simulated Annealing Scheme Package
